@@ -10,6 +10,7 @@
       <v-form ref="form" lazy-validation>
         <v-text-field
           v-model="email"
+          :rules="[ValidEmail]"
           label="Email"
           variant="solo-filled"
           color="purple"
@@ -19,6 +20,7 @@
 
         <v-text-field
           v-model="password"
+          :rules="[required, validPassword]"
           label="Password"
           type="password"
           variant="solo-filled"
@@ -49,11 +51,47 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { loginAPI } from '@/services/useApiServices'
+import router from '@/router'
+import { useAuthStore } from '@/stores/authStore'
+import { useToast } from '@/composables/useToast'
+
+const authStore = useAuthStore()
+
+const { success, error } = useToast()
 
 const email = ref('')
 const password = ref('')
 
-function submitForm() {
-  console.log('email :', email.value, 'password :', password.value)
+const required = (v: any) => !!v || 'This field is required'
+
+const validPassword = (v: any) => v.length >= 6 || 'Password must be at least 6 characters'
+const ValidEmail = (v: any) => {
+  if (!v) return 'This field is required'
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return emailRegex.test(v) || 'Please enter a valid email address'
+}
+
+async function submitForm() {
+  let formData = new FormData()
+  formData.append('email', email.value)
+  formData.append('password', password.value)
+
+  try {
+    const res = await loginAPI(formData)
+
+    if (res.data.success) {
+      success(res.data.message)
+      authStore.setToken(res.data.data.token)
+      authStore.isUserLoggedIn = true
+      setTimeout(() => {
+        router.push({ name: 'home' })
+      }, 1000)
+    } else {
+      error(res.data.message)
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 </script>

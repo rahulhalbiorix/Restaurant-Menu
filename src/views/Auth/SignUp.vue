@@ -12,6 +12,7 @@
       <v-form ref="form" lazy-validation>
         <v-text-field
           v-model="username"
+          :rules="[required, validUsername]"
           label="UserName"
           variant="solo-filled"
           color="purple"
@@ -21,6 +22,7 @@
 
         <v-text-field
           v-model="email"
+          :rules="[ValidEmail]"
           label="Email"
           variant="solo-filled"
           color="purple"
@@ -30,6 +32,7 @@
 
         <v-text-field
           v-model="password"
+          :rules="[required, validPassword]"
           label="Password"
           type="password"
           variant="solo-filled"
@@ -40,6 +43,7 @@
 
         <v-select
           v-model="selectedUserType"
+          :rules="[required]"
           :items="options"
           label="Select an option"
           variant="solo-filled"
@@ -49,6 +53,7 @@
 
         <v-file-input
           @change="handleFileUrl"
+          :rules="[required]"
           label="Upload Profile Picture"
           variant="solo-filled"
           color="purple"
@@ -82,6 +87,9 @@
 import { ref } from 'vue'
 import { SignupAPI } from '@/services/useApiServices'
 import router from '@/router'
+import { useToast } from '@/composables/useToast'
+
+const { success, error } = useToast()
 
 const form = ref(null)
 const username = ref('')
@@ -91,6 +99,19 @@ const selectedUserType = ref()
 const Image = ref()
 const ImageUrl = ref()
 const options = ['owner', 'customer']
+
+const required = (v: any) => !!v || 'This field is required'
+const validUsername = (v: any) =>
+  /^(?=.{3,16}$)(?![_\.])(?!.*[_\.]{2})[a-zA-Z0-9._]+(?<![_\.])$/.test(v) ||
+  'Username must be 3–16 characters, no special characters at start/end.'
+
+const validPassword = (v: any) => v.length >= 6 || 'Password must be at least 6 characters'
+
+const ValidEmail = (v: any) => {
+  if (!v) return 'This field is required'
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return emailRegex.test(v) || 'Please enter a valid email address'
+}
 
 function handleFileUrl(e: any) {
   const file = e.target.files[0]
@@ -115,8 +136,10 @@ const submitForm = async () => {
     const res = await SignupAPI(formData)
 
     if (res.data.success) {
-      alert(res.data.message)
+      success(res.data.message)
       router.push({ name: 'Login' })
+    } else {
+      error(res.data.message)
     }
   } catch (err) {
     console.log(err)
