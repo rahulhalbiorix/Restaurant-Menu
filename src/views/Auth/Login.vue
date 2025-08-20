@@ -84,8 +84,11 @@ async function submitForm() {
       success(res.data.message)
       authStore.setToken(res.data.data.token)
       authStore.isUserLoggedIn = true
+      authStore.setUserId(res.data.data.userId)
+      if (res.data.data.role === 'owner') authStore.isOwner = true
+      if (res.data.data.role === 'customer') authStore.isOwner = false
       setTimeout(() => {
-        router.push({ name: 'home' })
+        router.push({ name: 'Restaurant' })
       }, 1000)
     } else {
       error(res.data.message)

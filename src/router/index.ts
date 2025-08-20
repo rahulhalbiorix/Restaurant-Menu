@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { useAuthStore } from '@/stores/authStore'
+import Owner from '../views/Owner.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,14 +8,8 @@ const router = createRouter({
     {
       path: '/',
       redirect: {
-        name: 'home',
+        name: 'Restaurant',
       },
-    },
-    {
-      path: '/home',
-      name: 'home',
-      component: HomeView,
-      meta: { requiresAuth: true },
     },
     {
       path: '/signUp',
@@ -26,6 +20,34 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('@/views/Auth/Login.vue'),
+    },
+    {
+      path: '/owner',
+      name: 'Owner',
+      component: Owner,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'restaurant',
+          name: 'Restaurant',
+          component: () => import('@/views/Restaurant/RestaurantList.vue'),
+        },
+        {
+          path: 'combo',
+          name: 'Combo',
+          component: () => import('@/views/Combos/combo.vue'),
+        },
+        {
+          path: 'category',
+          name: 'Category',
+          component: () => import('@/views/Category/Category.vue'),
+        },
+        {
+          path: 'items',
+          name: 'Items',
+          component: () => import('@/views/Items/Items.vue'),
+        },
+      ],
     },
   ],
 })
