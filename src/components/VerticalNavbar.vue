@@ -7,16 +7,6 @@
     <div class="menu-wrapper">
       <PanelMenu :model="items" class="menu" />
     </div>
-
-    <div class="profile">
-      <div class="profile_img">
-        <img class="avatar" :src="authStore.userImage" alt="Admin Avatar" />
-      </div>
-      <div class="profile_data">
-        <div class="owner-name">{{ authStore.userName }}</div>
-        <div class="role">Owner</div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -73,6 +63,10 @@ const items = ref([
       authStore.userLoggedOut()
     },
   },
+  {
+    label: 'Cart',
+    icon: 'pi pi-shopping-cart ',
+  },
 ])
 </script>
 
@@ -104,7 +98,7 @@ const items = ref([
   flex: 1;
   overflow-y: auto;
   padding: 0 1rem;
-  margin-top: 13rem;
+  margin-top: 12rem;
 }
 
 .menu :deep(.p-panelmenu .p-menuitem-link) {
@@ -125,36 +119,5 @@ const items = ref([
 
 .menu :deep(.p-menuitem-icon) {
   margin-right: 0.5rem;
-}
-
-.profile {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-  margin-left: 5px;
-}
-
-.profile_data {
-  margin-left: 10px;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.owner-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.role {
-  font-size: 0.85rem;
-  color: #777;
 }
 </style>

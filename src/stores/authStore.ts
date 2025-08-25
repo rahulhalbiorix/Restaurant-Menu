@@ -11,11 +11,7 @@ export const useAuthStore = defineStore(
 
     const isOwner = ref(true)
 
-    const userName = ref('Rahul')
-
-    const userImage = ref(defaultImage)
-
-    const userId = ref()
+    const userId = ref('')
 
     function setToken(val: string) {
       token.value = val
@@ -25,35 +21,24 @@ export const useAuthStore = defineStore(
       userId.value = id
     }
 
-    function setUserImage(imageUrl: string) {
-      userImage.value = imageUrl
-    }
-
-    function setUserName(username: string) {
-      userName.value = username
-    }
-
     function userLoggedOut() {
       console.log('log out func wrk..')
       token.value = ''
       isUserLoggedIn.value = false
       isOwner.value = false
       token.value = ''
-      userName.value = ''
-      userId.value = 0
+      userId.value = ''
     }
 
     return {
       token,
       isUserLoggedIn,
       isOwner,
-      userName,
-      userImage,
+
       userId,
       setToken,
       userLoggedOut,
-      setUserImage,
-      setUserName,
+
       setUserId,
     }
   },

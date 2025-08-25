@@ -37,13 +37,6 @@ const fetchOwners = async () => {
     if (res.data.success) {
       restaurantList.value = res.data.data.users
     }
-
-    const findUsers = restaurantList.value.find((obj) => obj._id === authstore.userId)
-
-    if (findUsers) {
-      authstore.setUserName(findUsers.name)
-      authstore.setUserImage(findUsers.image)
-    }
   } catch (error) {
     console.error(error)
   }

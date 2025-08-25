@@ -1,6 +1,6 @@
 <template>
   <Card
-    class="shadow-md border border-gray-200 rounded-xl overflow-hidden h-full hover:shadow-lg transition duration-300"
+    class="bg-white shadow-md border border-gray-200 rounded-xl overflow-hidden h-full hover:shadow-lg transition duration-300"
   >
     <template #header>
       <img
