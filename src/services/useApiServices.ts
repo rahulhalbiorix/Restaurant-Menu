@@ -37,3 +37,39 @@ export const deleteItem = (id: string) =>
 
 export const toggleActiveOrDeActiveItem = (id: string) =>
   instance.patch(`/subcategories/toggle-subcategory-status/${id}`)
+
+export const fetchCombo = (page = 1, limit = 0) =>
+  instance.get('/menu/get-all-menu', { params: { page, limit } })
+
+export const createCombo = (data: FormData) => instance.post('/menu/create-menu', data)
+
+export const deleteCombo = (id: string) => instance.delete(`/menu/delete-menu/${id}`)
+
+export const fetchComboById = (id: string) => instance.get(`/menu/get-menu-details/${id}`)
+
+export const updateCombo = (id: string, data: FormData) =>
+  instance.put(`/menu/update-menu/${id}`, data)
+
+export const selectTodaysMenu = (id: string) => instance.post(`/menu/select-today/${id}`)
+
+export const comboActiveDeactive = (id: string) => instance.patch(`/menu/toggle-menu-status/${id}`)
+
+export const getMenuForBuy = (id: string) => instance.get(`/customer/menu/${id}`)
+
+export const getItemForBuy = (id: string, page = 1, limit = 0) =>
+  instance.get(`/customer/items/${id}`, { params: { page, limit } })
+
+export const getCart = () => instance.get('/cart/get-cart')
+
+export const addItemCart = (data: any) =>
+  instance.post('cart/add-item-cart', data, {
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+export const deleteCartItem = (data: any) =>
+  instance.delete('/cart/remove-cart-item', {
+    headers: { 'Content-Type': 'application/json' },
+    data,
+  })
+
+export const emptyCart = () => instance.delete('/cart/delete-cart')

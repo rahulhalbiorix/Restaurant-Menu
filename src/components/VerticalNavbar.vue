@@ -1,123 +1,99 @@
 <template>
-  <div class="vertical-navbar">
-    <div class="logo">
-      <img src="../assets/ChatGPT Image Aug 19, 2025, 06_21_22 PM.png" alt="Restaurant Logo" />
+  <div class="flex flex-col justify-between h-screen w-64 bg-white shadow-lg">
+    <!-- Logo -->
+    <div class="flex justify-center items-center py-6 border-b">
+      <img
+        src="../assets/ChatGPT Image Aug 19, 2025, 06_21_22 PM.png"
+        alt="Restaurant Logo"
+        class="w-24 h-auto object-contain"
+      />
     </div>
 
-    <div class="menu-wrapper">
-      <PanelMenu :model="items" class="menu" />
+    <!-- Menu Items -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
+      <ul class="space-y-2">
+        <li
+          @click="goToRestaurant"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-red-600 transition"
+        >
+          <i class="pi pi-shop text-lg"></i>
+          <span class="font-medium">Restaurant</span>
+        </li>
+
+        <li
+          v-if="authStore.isOwner"
+          @click="goToCombo"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-red-600 transition"
+        >
+          <i class="pi pi-star text-lg"></i>
+          <span class="font-medium">Combo</span>
+        </li>
+
+        <li
+          v-if="authStore.isOwner"
+          @click="goToCategory"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-red-600 transition"
+        >
+          <i class="pi pi-tags text-lg"></i>
+          <span class="font-medium">Category</span>
+        </li>
+
+        <li
+          v-if="authStore.isOwner"
+          @click="goToItems"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-red-600 transition"
+        >
+          <i class="pi pi-list text-lg"></i>
+          <span class="font-medium">Items</span>
+        </li>
+
+        <li
+          @click="goToCart"
+          class="flex items-center px-4 py-3 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-red-600 transition"
+        >
+          <div class="flex items-center gap-3">
+            <i class="pi pi-shopping-cart text-lg"></i>
+            <span class="font-medium">Cart</span>
+          </div>
+
+          <!-- Cart Badge -->
+          <span
+            v-if="authStore.cartTotalItem > 0"
+            class="bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 min-w-[22px] text-center ml-2"
+          >
+            {{ authStore.cartTotalItem }}
+          </span>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Footer -->
+    <div class="px-4 py-6 border-t">
+      <li
+        @click="logout"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-gray-700 hover:bg-red-100 hover:text-red-600 transition"
+      >
+        <i class="pi pi-sign-out text-lg"></i>
+        <span class="font-medium">Logout</span>
+      </li>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import PanelMenu from 'primevue/panelmenu'
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
 
-const items = ref([
-  {
-    label: 'Restaurant',
-    icon: 'pi pi-shop',
-    command: () => {
-      router.push({
-        name: 'Restaurant',
-      })
-    },
-  },
-  {
-    label: 'Combo',
-    icon: 'pi pi-star',
-    command: () => {
-      router.push({
-        name: 'Combo',
-      })
-    },
-  },
-  {
-    label: 'Category',
-    icon: 'pi pi-tags',
-    command: () => {
-      router.push({
-        name: 'Category',
-      })
-    },
-  },
-  {
-    label: 'Items',
-    icon: 'pi pi-list',
-    command: () => {
-      router.push({
-        name: 'Items',
-      })
-    },
-  },
-  {
-    label: 'LogOut',
-    icon: 'pi pi-sign-out',
-    command: () => {
-      router.push({ name: 'Login' })
-      authStore.userLoggedOut()
-    },
-  },
-  {
-    label: 'Cart',
-    icon: 'pi pi-shopping-cart ',
-  },
-])
+const goToRestaurant = () => router.push({ name: 'Restaurant' })
+const goToCombo = () => router.push({ name: 'Combo' })
+const goToCategory = () => router.push({ name: 'Category' })
+const goToItems = () => router.push({ name: 'Items' })
+const goToCart = () => router.push({ name: 'Cart' })
+
+const logout = () => {
+  router.push({ name: 'Login' })
+  authStore.userLoggedOut()
+}
 </script>
-
-<style scoped>
-.vertical-navbar {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  width: 250px;
-  background-color: #fff;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem 0;
-}
-
-.logo img {
-  width: 90px;
-  height: auto;
-  object-fit: contain;
-}
-
-.menu-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 1rem;
-  margin-top: 12rem;
-}
-
-.menu :deep(.p-panelmenu .p-menuitem-link) {
-  padding: 0.75rem;
-  border-radius: 6px;
-  transition: background 0.3s;
-}
-
-.menu :deep(.p-menuitem-link-active) {
-  background-color: #e6f0ff;
-  color: #0052cc;
-  font-weight: 600;
-}
-
-.menu :deep(.p-panelmenu .p-menuitem-link:hover) {
-  background-color: #f5f5f5;
-}
-
-.menu :deep(.p-menuitem-icon) {
-  margin-right: 0.5rem;
-}
-</style>

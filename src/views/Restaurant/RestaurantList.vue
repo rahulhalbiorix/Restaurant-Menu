@@ -23,7 +23,7 @@ import { useAuthStore } from '@/stores/authStore'
 const authstore = useAuthStore()
 
 interface Restaurant {
-  _id: number
+  _id: string
   image: string
   name: string
   email: string

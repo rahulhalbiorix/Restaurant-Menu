@@ -25,17 +25,17 @@ const router = createRouter({
       path: '/owner',
       name: 'Owner',
       component: Owner,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, layout: 'owner' },
       children: [
-        {
-          path: 'restaurant',
-          name: 'Restaurant',
-          component: () => import('@/views/Restaurant/RestaurantList.vue'),
-        },
         {
           path: 'combo',
           name: 'Combo',
           component: () => import('@/views/Combos/combo.vue'),
+        },
+        {
+          path: 'add-modify-combo/:id?',
+          name: 'AddNewCombo',
+          component: () => import('@/views/Combos/AddNewCombo.vue'),
         },
         {
           path: 'category',
@@ -48,6 +48,24 @@ const router = createRouter({
           component: () => import('@/views/Items/Items.vue'),
         },
       ],
+    },
+    {
+      path: '/restaurant',
+      name: 'Restaurant',
+      component: () => import('@/views/Restaurant/RestaurantList.vue'),
+      meta: { requiresAuth: true, layout: 'default' },
+    },
+    {
+      path: '/restaurant/:id',
+      name: 'RestaurantMenu',
+      component: () => import('@/views/Restaurant/RestaurantMenu.vue'),
+      meta: { requiresAuth: true, layout: 'default' },
+    },
+    {
+      path: '/cart',
+      name: 'Cart',
+      component: () => import('@/views/cart/Cart.vue'),
+      meta: { requiresAuth: true, layout: 'default' },
     },
   ],
 })

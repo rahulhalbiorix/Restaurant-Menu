@@ -9,7 +9,7 @@
         Join us today! Please fill in the information below
       </v-card-subtitle>
 
-      <v-form ref="form" lazy-validation>
+      <v-form ref="form" lazy-validation v-model="isFormValid">
         <v-text-field
           v-model="username"
           :rules="[required, validUsername]"
@@ -67,6 +67,8 @@
           size="large"
           block
           class="mt-5 glow-button"
+          :disabled="!isFormValid || loading"
+          :loading="loading"
           @click="submitForm"
         >
           Sign Up
@@ -99,6 +101,8 @@ const selectedUserType = ref()
 const Image = ref()
 const ImageUrl = ref()
 const options = ['owner', 'customer']
+const isFormValid = ref(false)
+const loading = ref(false)
 
 const required = (v: any) => !!v || 'This field is required'
 const validUsername = (v: any) =>
@@ -132,6 +136,8 @@ const submitForm = async () => {
 
   if (Image.value) formData.append('image', Image.value)
 
+  loading.value = true
+
   try {
     const res = await SignupAPI(formData)
 
@@ -143,6 +149,8 @@ const submitForm = async () => {
     }
   } catch (err) {
     console.log(err)
+  } finally {
+    loading.value = false
   }
 }
 </script>

@@ -33,6 +33,7 @@
       <div>
         <label class="block font-semibold mb-1">Title</label>
         <InputText v-model="newItem.title" placeholder="Enter item title" class="w-full" />
+        <p v-if="errors.title" class="text-red-500 text-xs mt-1">{{ errors.title }}</p>
       </div>
 
       <div>
@@ -43,6 +44,7 @@
           rows="3"
           class="w-full"
         />
+        <p v-if="errors.description" class="text-red-500 text-xs mt-1">{{ errors.description }}</p>
       </div>
       <div>
         <label class="block font-semibold mb-1">Category</label>
@@ -53,7 +55,8 @@
           option-value="_id"
           placeholder="Select a Categorie"
           class="w-full md:w-14rem"
-        />
+        />{{ newItem.categorie }}
+        <p v-if="errors.categorie" class="text-red-500 text-xs mt-1">{{ errors.categorie }}</p>
       </div>
       <div>
         <label class="block font-semibold mb-1">Quantity</label>
@@ -71,6 +74,7 @@
           {{ newItem.quantity }}
           <Button icon="pi pi-plus" severity="secondary" @click="newItem.quantity++" />
         </div>
+        <p v-if="errors.quantity" class="text-red-500 text-xs mt-1">{{ errors.quantity }}</p>
       </div>
 
       <div>
@@ -82,6 +86,7 @@
           locale="en-IN"
           class="w-full"
         />
+        <p v-if="errors.price" class="text-red-500 text-xs mt-1">{{ errors.price }}</p>
       </div>
 
       <div class="p-4 space-y-4">
@@ -93,6 +98,7 @@
           @change="onFileSelect"
           class="block w-full border p-2 rounded"
         />
+        <p v-if="errors.image" class="text-red-500 text-xs mt-1">{{ errors.image }}</p>
 
         <div v-if="previewUrl" class="mt-4">
           <p class="font-medium mb-2">Image Preview:</p>
@@ -102,7 +108,12 @@
 
       <div class="flex justify-end gap-3 mt-4">
         <Button label="Cancel" severity="secondary" @click="resetDialogueForm" />
-        <Button :label="LableAddEdit" severity="success" @click="saveNewItem" />
+        <Button
+          :label="LableAddEdit"
+          severity="success"
+          @click="saveNewItem"
+          :loading="isSubmitting"
+        />
       </div>
     </div>
   </Dialog>
@@ -162,6 +173,8 @@ const items = ref<Item[]>([])
 
 const showDialog = ref(false)
 
+const isSubmitting = ref(false)
+
 const newItem = ref({
   title: '',
   description: '',
@@ -170,6 +183,60 @@ const newItem = ref({
   quantity: 0,
   categorie: '',
 })
+
+const errors = ref({
+  title: '',
+  description: '',
+  price: '',
+  image: '',
+  quantity: '',
+  categorie: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.value = {
+    title: '',
+    description: '',
+    price: '',
+    image: '',
+    quantity: '',
+    categorie: '',
+  }
+
+  if (!newItem.value.title.trim()) {
+    errors.value.title = 'Title is required'
+    isValid = false
+  }
+
+  if (!newItem.value.description.trim()) {
+    errors.value.description = 'Description is Required'
+    isValid = false
+  }
+
+  if (!newItem.value.categorie) {
+    errors.value.categorie = 'Please select Categorie'
+    isValid = false
+  }
+
+  if (newItem.value.quantity <= 0) {
+    errors.value.quantity = 'Quantity Should be more than zero!'
+    isValid = false
+  }
+
+  if (newItem.value.price <= 0) {
+    errors.value.price = 'price should be more than zero!'
+    isValid = false
+  }
+
+  if (!newItem.value.image) {
+    errors.value.image = 'please select image!'
+    isValid = false
+  }
+
+  return isValid
+}
 
 const handleAddToCart = (item: any) => {
   console.log('Added to cart:', item)
@@ -187,11 +254,9 @@ const handleFetchItems = async () => {
 }
 
 const saveNewItem = async () => {
-  if (!newItem.value.title || !newItem.value.price) {
-    warning('Title and Price are required!')
-    return
-  }
+  if (!validateForm()) return
 
+  isSubmitting.value = true
   try {
     const createItemData = new FormData()
 
@@ -219,6 +284,8 @@ const saveNewItem = async () => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    isSubmitting.value = false
   }
 
   resetDialogueForm()

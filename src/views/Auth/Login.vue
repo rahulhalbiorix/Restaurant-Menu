@@ -7,7 +7,7 @@
         Please fill in the information below
       </v-card-subtitle>
 
-      <v-form ref="form" lazy-validation>
+      <v-form ref="form" v-model="isFormValid" lazy-validation>
         <v-text-field
           v-model="email"
           :rules="[ValidEmail]"
@@ -34,6 +34,8 @@
           size="large"
           block
           class="mt-5 glow-button"
+          :disabled="!isFormValid || loading"
+          :loading="loading"
           @click="submitForm"
         >
           Login
@@ -60,9 +62,10 @@ const authStore = useAuthStore()
 
 const { success, error } = useToast()
 
+const isFormValid = ref(false)
 const email = ref('')
 const password = ref('')
-
+const loading = ref(false)
 const required = (v: any) => !!v || 'This field is required'
 
 const validPassword = (v: any) => v.length >= 6 || 'Password must be at least 6 characters'
@@ -76,6 +79,8 @@ async function submitForm() {
   let formData = new FormData()
   formData.append('email', email.value)
   formData.append('password', password.value)
+
+  loading.value = true
 
   try {
     const res = await loginAPI(formData)
@@ -95,6 +100,8 @@ async function submitForm() {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    loading.value = false
   }
 }
 </script>

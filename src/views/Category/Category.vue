@@ -45,7 +45,9 @@
               class="w-full"
               v-model="form.CategoriesName"
             />
-            {{ form.CategoriesName }}
+            <p v-if="errors.CategoriesName" class="text-red-500 text-xs mt-1">
+              {{ errors.CategoriesName }}
+            </p>
           </div>
 
           <div class="mb-4">
@@ -57,7 +59,9 @@
               class="w-full"
               v-model="form.Description"
             />
-            {{ form.Description }}
+            <p v-if="errors.Description" class="text-red-500 text-xs mt-1">
+              {{ errors.Description }}
+            </p>
           </div>
 
           <div class="mb-4">
@@ -71,6 +75,7 @@
               class="w-full"
               @select="onFileSelect"
             />
+            <p v-if="errors.Image" class="text-red-500 text-xs mt-1">{{ errors.Image }}</p>
           </div>
           <div class="col-12 md:col-5 flex justify-center items-start">
             <img
@@ -96,6 +101,7 @@
             :label="AddUpdateLable"
             icon="pi pi-check"
             severity="success"
+            :loading="isSubmitting"
             @click="handleCreateUpdateCategories"
           />
         </div>
@@ -151,11 +157,46 @@ const showDialog = ref(false)
 
 const categoryList = ref<Category[]>([])
 
+const isSubmitting = ref(false)
+
 const form = ref({
   CategoriesName: '',
   Description: '',
   Image: '',
 })
+
+const errors = ref({
+  CategoriesName: '',
+  Description: '',
+  Image: '',
+})
+
+const validateForm = () => {
+  let isValid = true
+
+  errors.value = {
+    CategoriesName: '',
+    Description: '',
+    Image: '',
+  }
+
+  if (!form.value.CategoriesName.trim()) {
+    errors.value.CategoriesName = 'Categorie name is required'
+    isValid = false
+  }
+
+  if (!form.value.Description.trim()) {
+    errors.value.Description = 'Description is Required'
+    isValid = false
+  }
+
+  if (!form.value.Image) {
+    errors.value.Image = 'please upload Image'
+    isValid = false
+  }
+
+  return isValid
+}
 
 const AddUpdateLable = ref('Add')
 const updateCategoryId = ref('')
@@ -194,6 +235,10 @@ const onFileSelect = (event: any) => {
 }
 
 const handleCreateUpdateCategories = async () => {
+  if (!validateForm()) return
+
+  isSubmitting.value = true
+
   try {
     const createCategFormdata = new FormData()
 
@@ -227,6 +272,8 @@ const handleCreateUpdateCategories = async () => {
     } else {
       console.log('Network Error', err)
     }
+  } finally {
+    isSubmitting.value = false
   }
 }
 

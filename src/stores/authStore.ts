@@ -13,6 +13,8 @@ export const useAuthStore = defineStore(
 
     const userId = ref('')
 
+    const cartTotalItem = ref(0)
+
     function setToken(val: string) {
       token.value = val
     }
@@ -30,6 +32,10 @@ export const useAuthStore = defineStore(
       userId.value = ''
     }
 
+    function setCartItem(payload: number) {
+      cartTotalItem.value = payload
+    }
+
     return {
       token,
       isUserLoggedIn,
@@ -38,8 +44,9 @@ export const useAuthStore = defineStore(
       userId,
       setToken,
       userLoggedOut,
-
+      cartTotalItem,
       setUserId,
+      setCartItem,
     }
   },
   {
