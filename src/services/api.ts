@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 const instance = axios.create({
   baseURL: 'https://restaurant-menu-gcvp.onrender.com',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'multipart/form-data' },
 })
 
 instance.interceptors.request.use(
